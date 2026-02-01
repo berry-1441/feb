@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Valentine 💘</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  overflow:hidden;
+  padding-bottom:120px; /* space for spotify bar */
+}
+
+.card{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:420px;
+  text-align:center;
+  box-shadow:0 30px 60px rgba(0,0,0,0.6);
+}
+
+.heart{
+  font-size:60px;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);}
+}
+
+h1{
+  margin-top:10px;
+  font-size:26px;
+}
+
+p{
+  margin:15px 0 25px;
+  font-size:15px;
+  opacity:0.9;
+}
+
+.photo{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #ff4e50;
+  margin:15px auto;
+}
+
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+}
+
+button{
+  padding:12px 25px;
+  border:none;
+  border-radius:30px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.yes{
+  background:#ff4e50;
+  color:white;
+}
+
+.yes:hover{
+  transform:scale(1.1);
+}
+
+.no{
+  background:white;
+  color:#ff4e50;
+  position:relative;
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* Spotify fixed bottom bar */
+#spotify{
+  position:fixed;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+  max-width:420px;
+  border-radius:12px;
+  z-index:5;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<!-- CARD -->
+<div class="card" id="card">
+  <div class="heart">❤️</div>
+
+  <h1>Hey <span id="name">Dhriti</span> 💕</h1>
+
+  <!-- PHOTO -->
+  <img src="./herpic.jpeg" class="photo">
+
+  <p>
+    From the moment you came into my life,<br>
+    everything became more beautiful ✨
+  </p>
+
+  <h2>Will you be my Valentine? 💘</h2>
+
+  <div class="buttons">
+    <button class="yes" onclick="yesClicked()">Yes 💖</button>
+    <button class="no" onclick="moveNo()" ontouchstart="moveNo()">No 🙈</button>
+  </div>
+</div>
+
+<!-- SPOTIFY PLAYER (CARD KE BAHAR – SONG NEVER STOPS) -->
+<iframe
+  id="spotify"
+  src="https://open.spotify.com/embed/album/7JWCWWOkIr1AFB7jxjRgQ9"
+  height="80"
+  frameborder="0"
+  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+  loading="lazy">
+</iframe>
+
+<script>
+// NAME
+document.getElementById("name").innerText = "Dhriti";
+
+// NO BUTTON FUN (MOBILE + DESKTOP)
+let noCount = 0;
+function moveNo(){
+  const noBtn = document.querySelector(".no");
+  const texts = ["Are you sure? 😢", "Soch lo 🥺", "Please 🥹", "Mat bolo na 😭"];
+  noBtn.innerText = texts[noCount % texts.length];
+  noCount++;
+
+  const x = Math.random()*200 - 100;
+  const y = Math.random()*200 - 100;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+// YES CLICK (CARD CHANGE ONLY – SPOTIFY SAFE)
+function yesClicked(){
+  startConfetti();
+  document.getElementById("card").innerHTML = `
+    <div class="heart">💘</div>
+    <h1>YAYYY!!! 🥰</h1>
+    <p>
+      You just made my heart the happiest ❤️<br><br>
+      I can’t wait to make memories with you ✨
+    </p>
+    <h2>Happy Valentine’s Day My Senorita 💖</h2>
+  `;
+}
+
+// CONFETTI
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confetti = [];
+
+function startConfetti(){
+  for(let i=0;i<200;i++){
+    confetti.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      r:Math.random()*6+4,
+      d:Math.random()*20,
+      color:`hsl(${Math.random()*360},100%,50%)`
+    });
+  }
+  animate();
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(c=>{
+    ctx.beginPath();
+    ctx.fillStyle=c.color;
+    ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+    ctx.fill();
+    c.y+=Math.cos(c.d)+2;
+    if(c.y>canvas.height) c.y=0;
+  });
+  requestAnimationFrame(animate);
+}
+</script>
+
+</body>
+</html>
